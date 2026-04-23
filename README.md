@@ -1,109 +1,108 @@
-# Agent Specification System v2
+# Wyvrn Claude Tools — Harness
 
-A structured specification framework that constrains AI agents to build exactly what humans intend at any project scale.
+A standardized structure that lets Claude Code, Claude CLI, and Claude Cowork agents do development work autonomously and predictably. Drop the harness into a project, invoke a flow, answer clarifying questions through the session, and review the verifier report.
 
----
+## Install (v1 — manual)
 
-## The Problem
+v1 is a template folder. To install:
 
-AI agents degrade over iterative work in three ways:
+1. Copy the contents of this archive into your project root, **except this `README.md`**.
+2. Your project should now contain:
+   - `CLAUDE.md` at the root
+   - `.claude-wyvrn/` (the harness itself — never edit)
+   - `claude-wyvrn-local/` (your project's artifacts — track in git)
+3. Open `claude-wyvrn-local/ARCHITECTURE.md` and fill it in for your project.
+4. Optionally add stack-specific conventions — see "Customization" below.
 
-1. **Drift** — Scope and details blur. The agent slowly diverges from intent.
-2. **Assumption** — The agent picks approaches without validation. Different agents would choose differently.
-3. **Silence** — The agent doesn't recognize when it's making an unsupported decision.
+## What you can do
 
-And at scale, two more:
+### Run a flow
 
-4. **Shared blind spots** — If two agents have the same gap in judgment, the "second agent" test fails silently.
-5. **Information burial** — As specs grow, agents either skip what they need or drown in what they don't.
+Three flow types cover the common cases:
 
----
+- `/flow-feature` — add new functionality.
+- `/flow-fix` — resolve a bug.
+- `/flow-refactor` — restructure code without changing behavior.
 
-## How It Solves Each
+Each flow reads its required context, asks for clarifications through the session, does the work autonomously, verifies the result, and closes with a verifier report. See `.claude-wyvrn/workflows/WORKFLOW.md` for the phase-by-phase details.
 
-| Problem | Mechanism |
+Each flow type has its own initial-prompt requirements. Check the flow file (`.claude-wyvrn/workflows/FEATURE.md`, `FIX.md`, or `REFACTOR.md`) before invocation.
+
+### Invoke utility skills directly
+
+Most of the time you'll only invoke the flow skills above. Each sub-step is also available standalone:
+
+- `/run-clarifier` — re-run clarification on an existing spec.
+- `/run-verifier` — re-verify a closed flow's artifacts.
+- `/template-check <artifact-path>` — check template compliance for one file.
+- `/decision-log` — manually log a decision record.
+- `/archive` — archive old validated or failed flows.
+
+### Customization
+
+Drop files into project territory to customize behavior without touching the package:
+
+- **`claude-wyvrn-local/PROJECT.md`** — project specification. When present, agents read this instead of your root `README.md` for project context. Useful when your README is installation-focused and you want a separate project spec.
+- **`claude-wyvrn-local/conventions/[stack].md`** — project-specific stack conventions. Overrides any matching package-level conventions. Use the template at `.claude-wyvrn/templates/conventions.md`.
+- **`claude-wyvrn-local/ARCHITECTURE.md`** — project architecture. Pre-seeded from the template. Fill in your modules, interfaces, and invariants before first use.
+- **`claude-wyvrn-local/CONVENTIONS.md`** is not a file — project conventions live per-stack under `claude-wyvrn-local/conventions/[stack].md`.
+
+Package-level stack conventions are added by dropping files into `.claude-wyvrn/conventions/` following the same template. These apply to all projects using the harness and are typically maintained by whoever owns the harness package, not individual projects.
+
+### Validation mode
+
+Flows default to non-blocking validation: the flow closes on verifier success and you review the report asynchronously. If you prefer the flow to pause until you explicitly validate:
+
+- Per-flow: include `validation: blocking` in the initial prompt.
+- Project-wide default: declare it in `PROJECT.md`.
+
+## Folder map
+
+| Path | Purpose |
 |---|---|
-| Drift | Acceptance criteria are pass/fail. Post-implementation Gap Scan catches unspecified code. |
-| Assumption | Certainty Framework + mandatory decision logging for inferences. |
-| Silence | GAP_SCAN.md is a mechanical checklist — it doesn't rely on the agent "noticing" gaps. |
-| Shared blind spots | The Gap Scan checks for the PRESENCE of information, not the agent's judgment of clarity. |
-| Information burial | Tree hierarchy with INDEX.md routing. Agents read only what their task requires. |
+| `CLAUDE.md` | Entry point for the agent. Never edit. |
+| `.claude-wyvrn/` | Harness package. Never edit. |
+| `.claude-wyvrn/HARNESS.md` | Agent rules. |
+| `.claude-wyvrn/INDEX.md` | Agent navigation map. |
+| `.claude-wyvrn/DECISIONS.md` | Decision procedure. |
+| `.claude-wyvrn/conventions/` | Stack-agnostic and stack-specific rules. |
+| `.claude-wyvrn/workflows/` | Flow definitions. |
+| `.claude-wyvrn/templates/` | Templates for every artifact type. |
+| `.claude-wyvrn/agents/` | Subagent definitions. |
+| `.claude-wyvrn/skills/` | Invocable skills. |
+| `.claude-wyvrn/extensions/` | Drop-in extensions. Empty by default. |
+| `claude-wyvrn-local/` | Your project's artifacts and overrides. Track in git. |
+| `claude-wyvrn-local/ARCHITECTURE.md` | Your project architecture. Fill in before first use. |
+| `claude-wyvrn-local/features/` | Feature specs. |
+| `claude-wyvrn-local/fixes/` | Fix specs. |
+| `claude-wyvrn-local/refactors/` | Refactor specs. |
+| `claude-wyvrn-local/decisions/` | Decision records. |
+| `claude-wyvrn-local/clarifications/` | Clarification batches. |
+| `claude-wyvrn-local/reviews/` | Verifier reports. |
+| `claude-wyvrn-local/verifier-gaps/` | Verifier gap reports. |
+| `claude-wyvrn-local/conventions/` | Project-specific stack conventions (optional). |
+| `claude-wyvrn-local/.archive/` | Archived artifacts. Off-limits to agents during flows. |
 
----
+## What not to do
 
-## Architecture
+- **Don't edit files under `.claude-wyvrn/`.** They are overwritten on harness updates. Use project-territory overrides instead.
+- **Don't hand-write artifacts.** Artifacts come from templates through flows. Writing them by hand bypasses template compliance and verification.
+- **Don't answer agent questions by editing artifact files.** The agent asks through the session; you answer through the session. Agents record your answers in the artifacts.
+- **Don't skip the verifier.** A flow is not complete without a successful verifier pass.
+- **Don't expand flow scope mid-flow.** If you realize you want more, either let the current flow close and start a new one, or respond to the out-of-scope prompt when it appears.
 
-```
-specs/
-├── CLAUDE.md              ← Agent constitution. Always read first.
-├── INDEX.md               ← Navigation map. Routes agents to the right files.
-│
-├── process/               ← HOW agents work (pre-built, rarely changes)
-│   ├── WORKFLOW.md        ← Phases: Read → Scaffold → Implement → Verify
-│   ├── HUMAN_INPUT.md     ← When/how to escalate to human
-│   ├── GAP_SCAN.md        ← Mechanical checklist for spec completeness
-│   └── OPERATIONS.md      ← Human guide: how to orchestrate agent work
-│
-├── product/               ← WHAT we're building (you fill this in)
-│   ├── OVERVIEW.md        ← One-page product summary
-│   └── features/          ← One spec per feature
-│       └── _TEMPLATE.md
-│
-├── technical/             ← HOW it's built (you fill this in)
-│   ├── ARCHITECTURE.md    ← Tech stack, structure, constraints
-│   ├── MODULES.md         ← Module boundaries & interfaces
-│   └── CONVENTIONS.md     ← Coding standards
-│
-├── decisions/             ← Institutional memory (agents fill this in)
-│   └── _TEMPLATE.md
-│
-└── reviews/               ← Gap scan results (agents fill this in)
-    └── _TEMPLATE.md
-```
+## Where to learn more
 
----
+The files under `.claude-wyvrn/` are the authoritative reference. They're written for agents but are also readable by humans. In order of usefulness for a dev who wants to understand the system:
 
-## Quick Start
+1. `.claude-wyvrn/HARNESS.md` — the rules agents follow.
+2. `.claude-wyvrn/workflows/WORKFLOW.md` — what happens during a flow.
+3. `.claude-wyvrn/DECISIONS.md` — how agents classify decisions and when they stop to ask.
+4. `.claude-wyvrn/conventions/CONVENTIONS.md` — how agents produce code and artifacts.
+5. `.claude-wyvrn/INDEX.md` — the map of where everything lives.
 
-### 1. Fill in your product spec
-Edit `product/OVERVIEW.md`. Describe your product. Every section matters.
+Individual flow types, agents, and skills have their own files under `workflows/`, `agents/`, and `skills/`.
 
-### 2. Fill in your architecture
-Edit `technical/ARCHITECTURE.md`, `MODULES.md`, and `CONVENTIONS.md`.
+## Version
 
-### 3. Write your first feature spec
-Copy `product/features/_TEMPLATE.md` to `product/features/[name].md`. Fill in every section. Use concrete values, not adjectives.
-
-### 4. Run a Gap Scan on your spec (optional but recommended)
-Give an agent this prompt:
-```
-Read specs/process/GAP_SCAN.md. Then read specs/product/features/[name].md.
-Run the full pre-implementation gap scan. Report all ABSENT items.
-Do NOT attempt to fill the gaps — just report them.
-```
-
-### 5. Hand the feature to a building agent
-```
-You are working on [project name].
-Your task is to implement feature FEAT-[NNNN]: [name].
-Before doing anything, read specs/CLAUDE.md, then specs/INDEX.md,
-then follow Reading Route A.
-```
-
-### 6. Review the output
-Read the completion report. Spot-check an acceptance criterion. Review decision logs.
-
-### 7. Repeat for the next feature
-
----
-
-## Key Principles
-
-Read `process/OPERATIONS.md` for the full guide. The headlines:
-
-- **One feature per session.** Resets context decay.
-- **Sequential over parallel.** Avoids assumption compounding between agents.
-- **Spec first, code second.** Never start coding an unapproved spec.
-- **The Gap Scan is mandatory.** It catches what agent judgment misses.
-- **HIRs are a feature, not a bottleneck.** More questions early = fewer bugs later.
-- **Verify, don't trust.** 5-minute human spot-check after every session.
+See `.claude-wyvrn/VERSION` for the harness version shipped with this archive.
