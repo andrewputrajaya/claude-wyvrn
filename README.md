@@ -9,7 +9,7 @@ Starting in v0.2, the harness installs **globally per machine** (one install, ma
 This archive contains two top-level folders:
 
 - `.claude-wyvrn/` — the harness itself. Install to `~/.claude-wyvrn/` (your home directory).
-- `project-template/` — skeleton to copy into each project that uses the harness.
+- `.claude-wyvrn-local/` — CLAUDE.md —  Install to local project directory.
 
 ### Install the harness globally (once per machine)
 
@@ -23,11 +23,11 @@ All projects on this machine will share this harness. When a new harness version
 
 From the root of the project:
 
-1. Copy `CLAUDE.md` from `project-template/` into the project root.
-2. Copy the `.claude-wyvrn-local/` folder from `project-template/` into the project root.
+1. Copy `CLAUDE.md` into the project root. 
+2. Copy the `.claude-wyvrn-local/` folder into the project root.
 3. Track both in git.
 4. Open `.claude-wyvrn-local/ARCHITECTURE.md` and fill it in for your project.
-5. Optionally add `PROJECT.md` or stack-specific conventions (see Customization below).
+5. Optionally add `PROJECT.md` or stack-specific conventions (see Customization below). This is where you can move your pre-existing CLAUDE.md content. 
 
 ### CI
 
