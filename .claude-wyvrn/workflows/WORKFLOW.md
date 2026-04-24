@@ -6,13 +6,15 @@ Shared phase sequence for all flows. Flow-specific deltas are in `FEATURE.md`, `
 
 A flow runs five phases in order: Read, Clarify, Work, Verify, Validate.
 
+Before Phase 1, every flow skill runs a pre-flight check per `HARNESS.md` §2.6 to verify the harness is installed at `~/.claude-wyvrn/`. If the check fails, halt immediately and report to the human via the active session. Do not proceed with any phase.
+
 Emit a one-word progress indicator in the agent response at the start of each phase: `Reading...`, `Clarifying...`, `Working...`, `Verifying...`. No indicator for Validate; the verifier report is the signal that Validate has begun.
 
 ## 1. Read
 
 1.1 Follow the reading protocol in `HARNESS.md` §3.1.
 1.2 Read the task-specific spec template for the current flow type, as declared in `FEATURE.md`, `FIX.md`, or `REFACTOR.md`.
-1.3 Read prior decision records in `claude-wyvrn-local/decisions/` not marked archived.
+1.3 Read prior decision records in `.claude-wyvrn-local/decisions/` not marked archived.
 1.4 Do not proceed to Clarify until reading is complete.
 
 ## 2. Clarify
@@ -29,7 +31,7 @@ In each round, the `clarifier`:
 2. Drafts or updates the spec artifact in the appropriate folder.
 3. Applies `DECISIONS.md` §1 classification to every decision point in the draft. UNDECIDED or CONTRADICTION becomes a batch entry.
 4. If no batch entries: proceed to Work.
-5. If batch entries exist: write the clarification batch artifact to `claude-wyvrn-local/clarifications/[flow-id]-batch.md`. Return control to the flow skill.
+5. If batch entries exist: write the clarification batch artifact to `.claude-wyvrn-local/clarifications/[flow-id]-batch.md`. Return control to the flow skill.
 
 ### 2.3 Human prompting
 
@@ -87,7 +89,7 @@ The `verifier`:
 3. Invokes the `template-verifier` agent to verify structural template compliance of every artifact produced.
 4. Runs tests per the flow-specific delta file.
 5. Invokes the `code-reviewer` agent for convention compliance and code quality review.
-6. Produces a verifier report at `claude-wyvrn-local/reviews/[flow-id]-review.md`.
+6. Produces a verifier report at `.claude-wyvrn-local/reviews/[flow-id]-review.md`.
 
 ### 4.3 Verifier outcomes
 
@@ -151,7 +153,7 @@ The worker agent classifies the human's modification request into one of three c
 
 **Case 2: Verifier gap.** Modification implies the verifier should have caught an issue but did not.
 
-1. Produce a verifier gap report at `claude-wyvrn-local/verifier-gaps/GAP-NNNN-[slug].md`.
+1. Produce a verifier gap report at `.claude-wyvrn-local/verifier-gaps/GAP-NNNN-[slug].md`.
 2. Apply the correction per Case 1.
 3. The gap report is surfaced to the human at flow close. No automatic verifier change is made.
 

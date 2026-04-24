@@ -39,7 +39,7 @@
 
 ## External dependencies
 
-> [template] Third-party libraries, services, or infrastructure the system depends on. Format: one line per dependency, `<name> <version constraint> — <purpose>`.
+> [template] Third-party libraries, services, or infrastructure the system depends on. Format: one line per dependency, `<n> <version constraint> — <purpose>`.
 
 <external dependencies>
 

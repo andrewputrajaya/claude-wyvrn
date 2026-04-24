@@ -34,7 +34,7 @@ Calls the `verifier` agent in a fresh context with the specified flow state. Ret
 ## Outputs
 
 - Return value: `Success` or `Findings`.
-- Side effect: verifier report at `claude-wyvrn-local/reviews/[flow-id]-review.md` (cycle number included in the report).
+- Side effect: verifier report at `.claude-wyvrn-local/reviews/[flow-id]-review.md` (cycle number included in the report).
 
 ## Invokes
 

@@ -23,11 +23,11 @@ Writes a decision record using the decision template. Assigns the next DEC-NNNN 
 
 ## Behavior
 
-1. Scan `claude-wyvrn-local/decisions/` for highest existing `DEC-NNNN`. Increment by 1.
+1. Scan `.claude-wyvrn-local/decisions/` for highest existing `DEC-NNNN`. Increment by 1.
 2. Generate slug from title.
-3. Load template at `.claude-wyvrn/templates/decision.md`.
+3. Load template at `~/.claude-wyvrn/templates/decision.md`.
 4. Fill template fields with provided inputs. Use `<pending>` for fields not yet determinable.
-5. Write to `claude-wyvrn-local/decisions/DEC-NNNN-[slug].md`.
+5. Write to `.claude-wyvrn-local/decisions/DEC-NNNN-[slug].md`.
 6. Invoke `template-check` on the written file.
 7. If template findings, correct and re-check until clean.
 8. Return the decision record path.

@@ -14,11 +14,11 @@ Authoritative sources, in precedence order:
 
 1. The initial human prompt for the current flow.
 2. `HARNESS.md`.
-3. `claude-wyvrn-local/conventions/[stack].md` files, then `.claude-wyvrn/conventions/[stack].md` files, then `.claude-wyvrn/conventions/CONVENTIONS.md`.
-4. `claude-wyvrn-local/PROJECT.md` if present, else `README.md`.
-5. `claude-wyvrn-local/ARCHITECTURE.md`.
+3. `.claude-wyvrn-local/conventions/[stack].md` files, then `~/.claude-wyvrn/conventions/[stack].md` files, then `~/.claude-wyvrn/conventions/CONVENTIONS.md`.
+4. `.claude-wyvrn-local/PROJECT.md` if present, else `README.md`.
+5. `.claude-wyvrn-local/ARCHITECTURE.md`.
 6. The task-specific spec (feature, fix, or refactor artifact).
-7. Prior decision records in `claude-wyvrn-local/decisions/` not marked archived.
+7. Prior decision records in `.claude-wyvrn-local/decisions/` not marked archived.
 
 Action: apply the answer. No log required.
 

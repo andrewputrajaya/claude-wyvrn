@@ -4,10 +4,10 @@ Navigation map. Wyvrn Claude harness. Locate paths, templates, and artifact fold
 
 ## Territories
 
-- `.claude-wyvrn/` — package territory. Read-only. Harness files shipped with the package.
-- `claude-wyvrn-local/` — project territory. Read + write. Artifacts produced during flows.
+- `~/.claude-wyvrn/` — package territory. Machine-wide. Read-only during flows. Harness files shared across all projects on the machine.
+- `.claude-wyvrn-local/` — project territory. At the root of the current project. Read + write. Artifacts produced during flows.
 
-## Package territory: `.claude-wyvrn/`
+## Package territory: `~/.claude-wyvrn/`
 
 | Path | Status | Purpose |
 |---|---|---|
@@ -26,7 +26,7 @@ Navigation map. Wyvrn Claude harness. Locate paths, templates, and artifact fold
 | `agents/[name]/AGENT.md` | read | Subagent definitions. Discovered by folder scan. |
 | `extensions/` | read | Drop-in extension packages, namespaced. |
 
-## Project territory: `claude-wyvrn-local/`
+## Project territory: `.claude-wyvrn-local/`
 
 | Path | Status | Purpose |
 |---|---|---|
@@ -46,14 +46,14 @@ Navigation map. Wyvrn Claude harness. Locate paths, templates, and artifact fold
 
 | Artifact | Path | Template | ID format |
 |---|---|---|---|
-| Feature spec | `claude-wyvrn-local/features/` | `templates/feature-spec.md` | `FEAT-NNNN-[slug].md` |
-| Fix spec | `claude-wyvrn-local/fixes/` | `templates/fix-spec.md` | `FIX-NNNN-[slug].md` |
-| Refactor spec | `claude-wyvrn-local/refactors/` | `templates/refactor-spec.md` | `REF-NNNN-[slug].md` |
-| Architecture | `claude-wyvrn-local/ARCHITECTURE.md` | `templates/architecture.md` | fixed filename |
-| Decision record | `claude-wyvrn-local/decisions/` | `templates/decision.md` | `DEC-NNNN-[slug].md` |
-| Clarification batch | `claude-wyvrn-local/clarifications/` | `templates/clarification-batch.md` | `[flow-id]-batch.md` |
-| Verifier report | `claude-wyvrn-local/reviews/` | `templates/verifier-report.md` | `[flow-id]-review.md` |
-| Verifier gap | `claude-wyvrn-local/verifier-gaps/` | `templates/verifier-gap.md` | `GAP-NNNN-[slug].md` |
+| Feature spec | `.claude-wyvrn-local/features/` | `templates/feature-spec.md` | `FEAT-NNNN-[slug].md` |
+| Fix spec | `.claude-wyvrn-local/fixes/` | `templates/fix-spec.md` | `FIX-NNNN-[slug].md` |
+| Refactor spec | `.claude-wyvrn-local/refactors/` | `templates/refactor-spec.md` | `REF-NNNN-[slug].md` |
+| Architecture | `.claude-wyvrn-local/ARCHITECTURE.md` | `templates/architecture.md` | fixed filename |
+| Decision record | `.claude-wyvrn-local/decisions/` | `templates/decision.md` | `DEC-NNNN-[slug].md` |
+| Clarification batch | `.claude-wyvrn-local/clarifications/` | `templates/clarification-batch.md` | `[flow-id]-batch.md` |
+| Verifier report | `.claude-wyvrn-local/reviews/` | `templates/verifier-report.md` | `[flow-id]-review.md` |
+| Verifier gap | `.claude-wyvrn-local/verifier-gaps/` | `templates/verifier-gap.md` | `GAP-NNNN-[slug].md` |
 
 `[flow-id]` is the ID of the flow that produced the artifact. Example: the clarification batch from feature flow 0001 is `FEAT-0001-batch.md`.
 

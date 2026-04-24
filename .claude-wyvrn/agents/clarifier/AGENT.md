@@ -49,7 +49,7 @@ Invoked by the flow skill at the start of each Clarify round. Inputs:
 ## Outputs
 
 - Spec artifact at the flow's spec folder (created or updated).
-- Clarification batch artifact at `claude-wyvrn-local/clarifications/[flow-id]-batch.md` (created or updated).
+- Clarification batch artifact at `.claude-wyvrn-local/clarifications/[flow-id]-batch.md` (created or updated).
 
 ## Writes
 

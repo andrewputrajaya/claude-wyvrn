@@ -6,8 +6,8 @@ Conventions for agent-produced output. Code and artifact authorship. Structural 
 
 ### 1.1 Folders
 
-- `.claude-wyvrn/conventions/` — package-shipped conventions. Baseline.
-- `claude-wyvrn-local/conventions/` — project-specific conventions. Overrides package conventions on the same stack.
+- `~/.claude-wyvrn/conventions/` — package-shipped conventions. Baseline. Machine-wide.
+- `.claude-wyvrn-local/conventions/` — project-specific conventions. Overrides package conventions on the same stack.
 
 Universal rules below. Stack-specific files carry stack-specific rules.
 
@@ -21,7 +21,7 @@ Every stack file declares its applicable file extensions in a header block at th
 
 At flow start:
 
-1. Read all files in `.claude-wyvrn/conventions/` and `claude-wyvrn-local/conventions/`.
+1. Read all files in `~/.claude-wyvrn/conventions/` and `.claude-wyvrn-local/conventions/`.
 2. Build a map from file extension to stack file. On the same extension, project file wins over package file.
 3. For each source file touched during the flow, apply the matching stack file in addition to this universal file.
 4. If a touched extension has no matching stack file, apply only this universal file, and add a clarification asking whether a stack file should be created.
@@ -30,8 +30,8 @@ At flow start:
 
 Within a single source file:
 
-1. `claude-wyvrn-local/conventions/[stack].md` rules.
-2. `.claude-wyvrn/conventions/[stack].md` rules.
+1. `.claude-wyvrn-local/conventions/[stack].md` rules.
+2. `~/.claude-wyvrn/conventions/[stack].md` rules.
 3. This file.
 4. Observed conventions in the existing codebase (see §2.1).
 
@@ -91,7 +91,7 @@ General test rules. Stack-specific test rules (framework, file naming, runner in
 
 ## 3. Artifact authorship
 
-Artifacts are markdown files produced in `claude-wyvrn-local/` — specs, decision records, clarification batches, verifier reports, verifier gaps.
+Artifacts are markdown files produced in `.claude-wyvrn-local/` — specs, decision records, clarification batches, verifier reports, verifier gaps.
 
 ### 3.1 Agent-facing style
 

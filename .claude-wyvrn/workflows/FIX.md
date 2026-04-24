@@ -9,8 +9,8 @@ Fix flow deltas. Shared workflow in `WORKFLOW.md`. Rules in `HARNESS.md`. Decisi
 | Flow type | Fix |
 | Skill | `flow-fix` |
 | ID prefix | `FIX-` |
-| Spec template | `.claude-wyvrn/templates/fix-spec.md` |
-| Spec folder | `claude-wyvrn-local/fixes/` |
+| Spec template | `~/.claude-wyvrn/templates/fix-spec.md` |
+| Spec folder | `.claude-wyvrn-local/fixes/` |
 | Spec filename | `FIX-NNNN-[slug].md` |
 
 ## 2. Initial prompt requirements
@@ -58,7 +58,7 @@ Do not modify, rename, or weaken existing tests unrelated to the fix. If an exis
 
 ### 4.3 Architecture updates
 
-Fix flows do not modify `claude-wyvrn-local/ARCHITECTURE.md`. If a fix requires architectural change, classify as UNDECIDED — a fix that requires architectural change is likely a refactor, and the human should confirm the flow type via a clarification.
+Fix flows do not modify `.claude-wyvrn-local/ARCHITECTURE.md`. If a fix requires architectural change, classify as UNDECIDED — a fix that requires architectural change is likely a refactor, and the human should confirm the flow type via a clarification.
 
 ## 5. Verify deltas
 

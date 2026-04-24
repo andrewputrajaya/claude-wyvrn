@@ -16,9 +16,9 @@ Invoked by the `verifier` as the fourth check in Verify. Inputs:
 ## Reading sequence
 
 1. `HARNESS.md`, `DECISIONS.md`, `INDEX.md`.
-2. `.claude-wyvrn/conventions/CONVENTIONS.md`.
+2. `~/.claude-wyvrn/conventions/CONVENTIONS.md`.
 3. Relevant stack files per `CONVENTIONS.md` §1.3 — determined by the extensions of files in the diff.
-4. `claude-wyvrn-local/conventions/` files if present. Local files take precedence on stack overlap per `CONVENTIONS.md` §1.4.
+4. `.claude-wyvrn-local/conventions/` files if present. Local files take precedence on stack overlap per `CONVENTIONS.md` §1.4.
 5. The spec artifact for the flow (for scope context — what was supposed to change).
 6. The code diff.
 

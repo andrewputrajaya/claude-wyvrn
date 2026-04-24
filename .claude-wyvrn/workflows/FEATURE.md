@@ -9,8 +9,8 @@ Feature flow deltas. Shared workflow in `WORKFLOW.md`. Rules in `HARNESS.md`. De
 | Flow type | Feature |
 | Skill | `flow-feature` |
 | ID prefix | `FEAT-` |
-| Spec template | `.claude-wyvrn/templates/feature-spec.md` |
-| Spec folder | `claude-wyvrn-local/features/` |
+| Spec template | `~/.claude-wyvrn/templates/feature-spec.md` |
+| Spec folder | `.claude-wyvrn-local/features/` |
 | Spec filename | `FEAT-NNNN-[slug].md` |
 
 ## 2. Initial prompt requirements
@@ -49,7 +49,7 @@ Per `CONVENTIONS.md` §2.6: each acceptance criterion requires a new test. Write
 
 ### 4.2 Architecture updates
 
-Feature flows do not modify `claude-wyvrn-local/ARCHITECTURE.md` unless the feature introduces a new module, dependency, or architectural element. If modification is required, classify as INFERRED and log a decision record; do not modify ARCHITECTURE silently.
+Feature flows do not modify `.claude-wyvrn-local/ARCHITECTURE.md` unless the feature introduces a new module, dependency, or architectural element. If modification is required, classify as INFERRED and log a decision record; do not modify ARCHITECTURE silently.
 
 ## 5. Verify deltas
 

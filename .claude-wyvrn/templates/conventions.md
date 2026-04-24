@@ -1,6 +1,6 @@
 # Conventions: <stack>
 
-> [template] Template for a stack-specific conventions file. Instantiate as `[stack].md` under `.claude-wyvrn/conventions/` (package-shipped) or `claude-wyvrn-local/conventions/` (project-specific).
+> [template] Template for a stack-specific conventions file. Instantiate as `[stack].md` under `~/.claude-wyvrn/conventions/` (package-shipped) or `.claude-wyvrn-local/conventions/` (project-specific).
 
 **Stack:** <stack identifier, e.g., js, python, cpp, csharp>
 **Applies to extensions:** <comma-separated list, e.g., .js, .jsx, .mjs, .cjs>
@@ -39,9 +39,9 @@
 
 ## Testing
 
-> [template] Stack-specific test conventions. Test framework, file naming, test runner invocation command, test organization. General test rules are in `.claude-wyvrn/conventions/CONVENTIONS.md` §2.6; this section layers stack-specific details on top.
+> [template] Stack-specific test conventions. Test framework, file naming, test runner invocation command, test organization. General test rules are in `~/.claude-wyvrn/conventions/CONVENTIONS.md` §2.6; this section layers stack-specific details on top.
 
-**Test framework:** <n and version>
+**Test framework:** <name and version>
 **Test file pattern:** <glob or pattern>
 **Test runner command:** <command>
 

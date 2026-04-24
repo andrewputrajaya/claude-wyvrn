@@ -1,32 +1,51 @@
 # Wyvrn Claude Tools — Harness
 
-A standardized structure that lets Claude Code, Claude CLI, and Claude Cowork agents do development work autonomously and predictably. Drop the harness into a project, invoke a flow, answer clarifying questions through the session, and review the verifier report.
+A standardized structure that lets Claude Code, Claude CLI, and Claude Cowork agents do development work autonomously and predictably.
 
-## Install (v1 — manual)
+Starting in v0.2, the harness installs **globally per machine** (one install, many projects) and each project carries a small **project-local folder** for its artifacts.
 
-v1 is a template folder. To install:
+## Install (v0.2 — manual)
 
-1. Copy the contents of this archive into your project root, **except this `README.md`**.
-2. Your project should now contain:
-   - `CLAUDE.md` at the root
-   - `.claude-wyvrn/` (the harness itself — never edit)
-   - `claude-wyvrn-local/` (your project's artifacts — track in git)
-3. Open `claude-wyvrn-local/ARCHITECTURE.md` and fill it in for your project.
-4. Optionally add stack-specific conventions — see "Customization" below.
+This archive contains two top-level folders:
+
+- `.claude-wyvrn/` — the harness itself. Install to `~/.claude-wyvrn/` (your home directory).
+- `project-template/` — skeleton to copy into each project that uses the harness.
+
+### Install the harness globally (once per machine)
+
+1. Copy the contents of `.claude-wyvrn/` into `~/.claude-wyvrn/`.
+2. On Windows this is typically `%USERPROFILE%\.claude-wyvrn\`.
+3. Verify: `~/.claude-wyvrn/VERSION` should exist and contain a version number.
+
+All projects on this machine will share this harness. When a new harness version is released, update this one folder and every project picks it up.
+
+### Install project-template into a project (once per project)
+
+From the root of the project:
+
+1. Copy `CLAUDE.md` from `project-template/` into the project root.
+2. Copy the `.claude-wyvrn-local/` folder from `project-template/` into the project root.
+3. Track both in git.
+4. Open `.claude-wyvrn-local/ARCHITECTURE.md` and fill it in for your project.
+5. Optionally add `PROJECT.md` or stack-specific conventions (see Customization below).
+
+### CI
+
+CI needs the harness installed the same way as a developer machine. Before running any flow-based automation, install the harness at `~/.claude-wyvrn/` in the CI environment. The project-template files (`CLAUDE.md` and `.claude-wyvrn-local/`) come with the repo.
 
 ## What you can do
 
 ### Run a flow
 
-Three flow types cover the common cases:
+Three flow types:
 
 - `/flow-feature` — add new functionality.
 - `/flow-fix` — resolve a bug.
 - `/flow-refactor` — restructure code without changing behavior.
 
-Each flow reads its required context, asks for clarifications through the session, does the work autonomously, verifies the result, and closes with a verifier report. See `.claude-wyvrn/workflows/WORKFLOW.md` for the phase-by-phase details.
+Each flow reads its required context, asks clarifying questions through the active session, does the work autonomously, verifies the result, and closes with a verifier report. Phases and rules are in `~/.claude-wyvrn/workflows/WORKFLOW.md`.
 
-Each flow type has its own initial-prompt requirements. Check the flow file (`.claude-wyvrn/workflows/FEATURE.md`, `FIX.md`, or `REFACTOR.md`) before invocation.
+Each flow type has its own initial-prompt requirements. Check the flow file (`~/.claude-wyvrn/workflows/FEATURE.md`, `FIX.md`, or `REFACTOR.md`) before invocation.
 
 ### Invoke utility skills directly
 
@@ -40,14 +59,13 @@ Most of the time you'll only invoke the flow skills above. Each sub-step is also
 
 ### Customization
 
-Drop files into project territory to customize behavior without touching the package:
+Drop files into project territory to customize behavior without touching the global harness:
 
-- **`claude-wyvrn-local/PROJECT.md`** — project specification. When present, agents read this instead of your root `README.md` for project context. Useful when your README is installation-focused and you want a separate project spec.
-- **`claude-wyvrn-local/conventions/[stack].md`** — project-specific stack conventions. Overrides any matching package-level conventions. Use the template at `.claude-wyvrn/templates/conventions.md`.
-- **`claude-wyvrn-local/ARCHITECTURE.md`** — project architecture. Pre-seeded from the template. Fill in your modules, interfaces, and invariants before first use.
-- **`claude-wyvrn-local/CONVENTIONS.md`** is not a file — project conventions live per-stack under `claude-wyvrn-local/conventions/[stack].md`.
+- **`.claude-wyvrn-local/PROJECT.md`** — project specification. When present, agents read this instead of the root `README.md` for project context. Useful when your README is installation-focused and you want a separate project spec.
+- **`.claude-wyvrn-local/conventions/[stack].md`** — project-specific stack conventions. Overrides any matching global conventions. Use the template at `~/.claude-wyvrn/templates/conventions.md`.
+- **`.claude-wyvrn-local/ARCHITECTURE.md`** — project architecture. Seeded from the template. Fill in your modules, interfaces, and invariants before first use.
 
-Package-level stack conventions are added by dropping files into `.claude-wyvrn/conventions/` following the same template. These apply to all projects using the harness and are typically maintained by whoever owns the harness package, not individual projects.
+Machine-wide stack conventions go into `~/.claude-wyvrn/conventions/` using the same template. These apply to every project on the machine and are typically maintained by whoever owns the harness install.
 
 ### Validation mode
 
@@ -58,34 +76,40 @@ Flows default to non-blocking validation: the flow closes on verifier success an
 
 ## Folder map
 
+### Machine-wide (`~/.claude-wyvrn/`)
+
 | Path | Purpose |
 |---|---|
-| `CLAUDE.md` | Entry point for the agent. Never edit. |
-| `.claude-wyvrn/` | Harness package. Never edit. |
-| `.claude-wyvrn/HARNESS.md` | Agent rules. |
-| `.claude-wyvrn/INDEX.md` | Agent navigation map. |
-| `.claude-wyvrn/DECISIONS.md` | Decision procedure. |
-| `.claude-wyvrn/conventions/` | Stack-agnostic and stack-specific rules. |
-| `.claude-wyvrn/workflows/` | Flow definitions. |
-| `.claude-wyvrn/templates/` | Templates for every artifact type. |
-| `.claude-wyvrn/agents/` | Subagent definitions. |
-| `.claude-wyvrn/skills/` | Invocable skills. |
-| `.claude-wyvrn/extensions/` | Drop-in extensions. Empty by default. |
-| `claude-wyvrn-local/` | Your project's artifacts and overrides. Track in git. |
-| `claude-wyvrn-local/ARCHITECTURE.md` | Your project architecture. Fill in before first use. |
-| `claude-wyvrn-local/features/` | Feature specs. |
-| `claude-wyvrn-local/fixes/` | Fix specs. |
-| `claude-wyvrn-local/refactors/` | Refactor specs. |
-| `claude-wyvrn-local/decisions/` | Decision records. |
-| `claude-wyvrn-local/clarifications/` | Clarification batches. |
-| `claude-wyvrn-local/reviews/` | Verifier reports. |
-| `claude-wyvrn-local/verifier-gaps/` | Verifier gap reports. |
-| `claude-wyvrn-local/conventions/` | Project-specific stack conventions (optional). |
-| `claude-wyvrn-local/.archive/` | Archived artifacts. Off-limits to agents during flows. |
+| `HARNESS.md` | Agent rules. |
+| `INDEX.md` | Agent navigation map. |
+| `DECISIONS.md` | Decision procedure. |
+| `conventions/` | Universal and stack-specific rules. |
+| `workflows/` | Flow definitions. |
+| `templates/` | Templates for every artifact type. |
+| `agents/` | Subagent definitions. |
+| `skills/` | Invocable skills. |
+| `extensions/` | Drop-in extensions. Empty by default. |
+
+### Per project
+
+| Path | Purpose |
+|---|---|
+| `CLAUDE.md` | Entry point for the agent. |
+| `.claude-wyvrn-local/` | Your project's artifacts and overrides. Track in git. |
+| `.claude-wyvrn-local/ARCHITECTURE.md` | Your project architecture. Fill in before first use. |
+| `.claude-wyvrn-local/features/` | Feature specs. |
+| `.claude-wyvrn-local/fixes/` | Fix specs. |
+| `.claude-wyvrn-local/refactors/` | Refactor specs. |
+| `.claude-wyvrn-local/decisions/` | Decision records. |
+| `.claude-wyvrn-local/clarifications/` | Clarification batches. |
+| `.claude-wyvrn-local/reviews/` | Verifier reports. |
+| `.claude-wyvrn-local/verifier-gaps/` | Verifier gap reports. |
+| `.claude-wyvrn-local/conventions/` | Project-specific stack conventions (optional). |
+| `.claude-wyvrn-local/.archive/` | Archived artifacts. Off-limits to agents during flows. |
 
 ## What not to do
 
-- **Don't edit files under `.claude-wyvrn/`.** They are overwritten on harness updates. Use project-territory overrides instead.
+- **Don't edit files under `~/.claude-wyvrn/`** directly unless you're updating the machine-wide harness intentionally. To customize for one project, use `.claude-wyvrn-local/` overrides.
 - **Don't hand-write artifacts.** Artifacts come from templates through flows. Writing them by hand bypasses template compliance and verification.
 - **Don't answer agent questions by editing artifact files.** The agent asks through the session; you answer through the session. Agents record your answers in the artifacts.
 - **Don't skip the verifier.** A flow is not complete without a successful verifier pass.
@@ -93,16 +117,16 @@ Flows default to non-blocking validation: the flow closes on verifier success an
 
 ## Where to learn more
 
-The files under `.claude-wyvrn/` are the authoritative reference. They're written for agents but are also readable by humans. In order of usefulness for a dev who wants to understand the system:
+The files under `~/.claude-wyvrn/` are the authoritative reference. They're written for agents but are also readable by humans. In order of usefulness for a dev who wants to understand the system:
 
-1. `.claude-wyvrn/HARNESS.md` — the rules agents follow.
-2. `.claude-wyvrn/workflows/WORKFLOW.md` — what happens during a flow.
-3. `.claude-wyvrn/DECISIONS.md` — how agents classify decisions and when they stop to ask.
-4. `.claude-wyvrn/conventions/CONVENTIONS.md` — how agents produce code and artifacts.
-5. `.claude-wyvrn/INDEX.md` — the map of where everything lives.
+1. `~/.claude-wyvrn/HARNESS.md` — the rules agents follow.
+2. `~/.claude-wyvrn/workflows/WORKFLOW.md` — what happens during a flow.
+3. `~/.claude-wyvrn/DECISIONS.md` — how agents classify decisions and when they stop to ask.
+4. `~/.claude-wyvrn/conventions/CONVENTIONS.md` — how agents produce code and artifacts.
+5. `~/.claude-wyvrn/INDEX.md` — the map of where everything lives.
 
 Individual flow types, agents, and skills have their own files under `workflows/`, `agents/`, and `skills/`.
 
 ## Version
 
-See `.claude-wyvrn/VERSION` for the harness version shipped with this archive.
+See `~/.claude-wyvrn/VERSION` for the installed harness version.

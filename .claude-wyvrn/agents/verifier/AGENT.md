@@ -72,7 +72,7 @@ Advisory findings and out-of-scope findings do not trigger Findings outcome. The
 
 ## Outputs
 
-- Verifier report at `claude-wyvrn-local/reviews/[flow-id]-review.md`.
+- Verifier report at `.claude-wyvrn-local/reviews/[flow-id]-review.md`.
 
 ## Writes
 

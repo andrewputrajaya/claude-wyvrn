@@ -9,8 +9,8 @@ Refactor flow deltas. Shared workflow in `WORKFLOW.md`. Rules in `HARNESS.md`. D
 | Flow type | Refactor |
 | Skill | `flow-refactor` |
 | ID prefix | `REF-` |
-| Spec template | `.claude-wyvrn/templates/refactor-spec.md` |
-| Spec folder | `claude-wyvrn-local/refactors/` |
+| Spec template | `~/.claude-wyvrn/templates/refactor-spec.md` |
+| Spec folder | `.claude-wyvrn-local/refactors/` |
 | Spec filename | `REF-NNNN-[slug].md` |
 
 ## 2. Initial prompt requirements
@@ -67,7 +67,7 @@ Exception: tests that exist to assert implementation details removed by the refa
 
 ### 4.4 Architecture updates
 
-Refactor flows may modify `claude-wyvrn-local/ARCHITECTURE.md`. When the refactor alters architectural elements (module boundaries, dependency patterns, structural decisions), update ARCHITECTURE.md as part of the flow. The `template-verifier` agent verifies the update matches the architecture template.
+Refactor flows may modify `.claude-wyvrn-local/ARCHITECTURE.md`. When the refactor alters architectural elements (module boundaries, dependency patterns, structural decisions), update ARCHITECTURE.md as part of the flow. The `template-verifier` agent verifies the update matches the architecture template.
 
 ## 5. Verify deltas
 

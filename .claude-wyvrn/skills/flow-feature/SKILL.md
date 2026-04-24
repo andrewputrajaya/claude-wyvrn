@@ -28,13 +28,17 @@ Optionally:
 
 ## Behavior
 
+### Phase 0: Pre-flight check
+
+Verify `~/.claude-wyvrn/` exists and contains `VERSION`, `HARNESS.md`, `INDEX.md` per `HARNESS.md` §2.6. If any are missing, halt and report to the human via the active session: "Wyvrn harness not installed at `~/.claude-wyvrn/`. Install the harness and retry."
+
 ### Phase 1: Read
 
 1. Emit `Reading...` in the session.
 2. Read all files per `HARNESS.md` §3.1.
 3. Read `workflows/WORKFLOW.md` and `workflows/FEATURE.md`.
-4. Read prior decision records in `claude-wyvrn-local/decisions/` not marked archived.
-5. Assign flow ID: scan `claude-wyvrn-local/features/` for highest existing `FEAT-NNNN`, increment by 1. Human may override via the initial prompt.
+4. Read prior decision records in `.claude-wyvrn-local/decisions/` not marked archived.
+5. Assign flow ID: scan `.claude-wyvrn-local/features/` for highest existing `FEAT-NNNN`, increment by 1. Human may override via the initial prompt.
 6. Generate slug from task title.
 
 ### Phase 2: Clarify
@@ -94,11 +98,11 @@ When the human issues a modification request after flow close:
 
 ## Outputs
 
-- Spec artifact at `claude-wyvrn-local/features/FEAT-NNNN-[slug].md`.
-- Clarification batch at `claude-wyvrn-local/clarifications/FEAT-NNNN-batch.md`.
-- Decision records at `claude-wyvrn-local/decisions/` (as needed).
-- Verifier report at `claude-wyvrn-local/reviews/FEAT-NNNN-review.md`.
-- Any verifier gap reports at `claude-wyvrn-local/verifier-gaps/GAP-NNNN-[slug].md` (as needed).
+- Spec artifact at `.claude-wyvrn-local/features/FEAT-NNNN-[slug].md`.
+- Clarification batch at `.claude-wyvrn-local/clarifications/FEAT-NNNN-batch.md`.
+- Decision records at `.claude-wyvrn-local/decisions/` (as needed).
+- Verifier report at `.claude-wyvrn-local/reviews/FEAT-NNNN-review.md`.
+- Any verifier gap reports at `.claude-wyvrn-local/verifier-gaps/GAP-NNNN-[slug].md` (as needed).
 - Code changes implementing the feature.
 - New tests covering the acceptance criteria.
 
