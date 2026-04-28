@@ -73,12 +73,18 @@ write_manifest() {
 
 install_shim() {
   mkdir -p "$BIN_DIR" "$INSTALL_DIR/.bin"
-  local src abs_src abs_dest
-  src="$1"
-  abs_src="$(cd "$(dirname "$src")" 2>/dev/null && pwd)/$(basename "$src")"
-  abs_dest="$(cd "$(dirname "$INTERNAL_SCRIPT")" 2>/dev/null && pwd)/$(basename "$INTERNAL_SCRIPT")"
-  if [ "$abs_src" != "$abs_dest" ] && [ -f "$src" ]; then
-    cp "$src" "$INTERNAL_SCRIPT"
+  local src="$1" tmp="$2"
+  if [ -n "$tmp" ] && [ -f "$tmp/install.sh" ]; then
+    cp "$tmp/install.sh" "$INTERNAL_SCRIPT"
+  elif [ -n "$src" ] && [ -f "$src" ]; then
+    local abs_src abs_dest
+    abs_src="$(cd "$(dirname "$src")" 2>/dev/null && pwd)/$(basename "$src")"
+    abs_dest="$(cd "$(dirname "$INTERNAL_SCRIPT")" 2>/dev/null && pwd)/$(basename "$INTERNAL_SCRIPT")"
+    if [ "$abs_src" != "$abs_dest" ]; then
+      cp "$src" "$INTERNAL_SCRIPT"
+    fi
+  else
+    die "cannot install CLI shim: install.sh not available from release or local path (this should not happen — please report)"
   fi
   chmod +x "$INTERNAL_SCRIPT" 2>/dev/null || true
   cat > "$SHIM" <<'EOF'
@@ -107,10 +113,13 @@ fetch_release() {
   log "downloading $base/$TARBALL_NAME"
   download "$base/$TARBALL_NAME" "$tmp/$TARBALL_NAME"
   download "$base/$SUMS_NAME"    "$tmp/$SUMS_NAME"
-  local expected
-  expected="$(awk -v f="$TARBALL_NAME" '$2==f{print $1}' "$tmp/$SUMS_NAME")"
-  [ -n "$expected" ] || die "$TARBALL_NAME not listed in $SUMS_NAME"
-  verify_sha256 "$tmp/$TARBALL_NAME" "$expected"
+  download "$base/install.sh"    "$tmp/install.sh"
+  local name expected
+  for name in "$TARBALL_NAME" "install.sh"; do
+    expected="$(awk -v f="$name" '$2==f{print $1}' "$tmp/$SUMS_NAME")"
+    [ -n "$expected" ] || die "$name not listed in $SUMS_NAME"
+    verify_sha256 "$tmp/$name" "$expected"
+  done
 }
 
 extract_release() {
@@ -145,7 +154,7 @@ apply_payload() {
   rm -rf "$INSTALL_DIR/.skeleton"
   mkdir -p "$INSTALL_DIR/.skeleton"
   cp -R "$tmp/.skeleton/." "$INSTALL_DIR/.skeleton/"
-  install_shim "${BASH_SOURCE[0]}"
+  install_shim "${BASH_SOURCE[0]:-}" "$tmp"
   write_manifest "$version" "$INSTALL_DIR"
 }
 

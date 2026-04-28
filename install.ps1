@@ -60,13 +60,16 @@ function Get-Release($version, $tmp) {
     } else {
         "https://github.com/$Repo/releases/download/v$version"
     }
-    Download "$base/$ZipName"  (Join-Path $tmp $ZipName)
-    Download "$base/$SumsName" (Join-Path $tmp $SumsName)
+    Download "$base/$ZipName"     (Join-Path $tmp $ZipName)
+    Download "$base/$SumsName"    (Join-Path $tmp $SumsName)
+    Download "$base/install.ps1"  (Join-Path $tmp 'install.ps1')
     $sums = Get-Content (Join-Path $tmp $SumsName)
-    $line = $sums | Where-Object { $_ -match "\s+$([regex]::Escape($ZipName))$" } | Select-Object -First 1
-    if (-not $line) { Die "$ZipName not listed in $SumsName" }
-    $expected = ($line -split '\s+', 2)[0]
-    Test-Sha256 (Join-Path $tmp $ZipName) $expected
+    foreach ($name in @($ZipName, 'install.ps1')) {
+        $line = $sums | Where-Object { $_ -match "\s+$([regex]::Escape($name))$" } | Select-Object -First 1
+        if (-not $line) { Die "$name not listed in $SumsName" }
+        $expected = ($line -split '\s+', 2)[0]
+        Test-Sha256 (Join-Path $tmp $name) $expected
+    }
     Expand-Archive -Path (Join-Path $tmp $ZipName) -DestinationPath $tmp -Force
     if (-not (Test-Path (Join-Path $tmp '.claude-wyvrn'))) { Die "release archive missing .claude-wyvrn/" }
     if (-not (Test-Path (Join-Path $tmp '.skeleton')))     { Die "release archive missing .skeleton/" }
@@ -102,11 +105,22 @@ function Write-Manifest($version, $root) {
     Set-Content -Path $Manifest -Value $lines -Encoding ASCII
 }
 
-function Install-Shim($selfPath) {
+function Install-Shim($selfPath, $tmp) {
     New-Item -ItemType Directory -Force -Path $BinDir, $InternalDir | Out-Null
     $internalScript = Join-Path $InternalDir 'install.ps1'
-    if ($selfPath -and ((Resolve-Path -LiteralPath $selfPath -ErrorAction SilentlyContinue).Path -ne (Resolve-Path -LiteralPath $internalScript -ErrorAction SilentlyContinue).Path)) {
-        Copy-Item -Force $selfPath $internalScript
+    $releaseScript  = if ($tmp) { Join-Path $tmp 'install.ps1' } else { $null }
+    if ($releaseScript -and (Test-Path -LiteralPath $releaseScript)) {
+        Copy-Item -Force $releaseScript $internalScript
+    } elseif ($selfPath -and (Test-Path -LiteralPath $selfPath)) {
+        $selfResolved = (Resolve-Path -LiteralPath $selfPath).Path
+        $destResolved = if (Test-Path -LiteralPath $internalScript) {
+            (Resolve-Path -LiteralPath $internalScript).Path
+        } else { $internalScript }
+        if ($selfResolved -ne $destResolved) {
+            Copy-Item -Force $selfPath $internalScript
+        }
+    } else {
+        Die "cannot install CLI shim: install.ps1 not available from release or local path (this should not happen — please report)"
     }
     @"
 # claude-wyvrn shim
@@ -187,7 +201,7 @@ function Install-Payload($tmp, $version, $selfPath) {
     if (Test-Path $skel) { Remove-Item -Recurse -Force $skel }
     New-Item -ItemType Directory -Force -Path $skel | Out-Null
     Copy-Item -Recurse -Force (Join-Path $tmp '.skeleton\*') $skel
-    Install-Shim $selfPath
+    Install-Shim $selfPath $tmp
     Write-Manifest $version $InstallDir
     Add-ToUserPath $BinDir
     Update-PSProfile
