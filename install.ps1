@@ -246,18 +246,18 @@ function Invoke-Init {
     if (Test-Path '.\.claude-wyvrn-local') {
         Die "project already initialized (.claude-wyvrn-local\ exists). To update skeleton structure and CLAUDE.md, run: claude-wyvrn refresh"
     }
-    $preserved = $null
+    $preserve = $false
     if (Test-Path '.\CLAUDE.md') {
-        $existing  = Get-Content '.\CLAUDE.md' -Raw -ErrorAction SilentlyContinue
-        $skeleton  = Get-Content (Join-Path $SkeletonDir 'CLAUDE.md') -Raw
-        if ($existing -and ($existing.Trim() -ne $skeleton.Trim())) { $preserved = $existing }
+        $existingHash = Get-FileSha256Lower '.\CLAUDE.md'
+        $skeletonHash = Get-FileSha256Lower (Join-Path $SkeletonDir 'CLAUDE.md')
+        if ($existingHash -ne $skeletonHash) { $preserve = $true }
     }
     Copy-Item -Recurse -Force (Join-Path $SkeletonDir '.claude-wyvrn-local') '.\.claude-wyvrn-local'
-    Copy-Item -Force (Join-Path $SkeletonDir 'CLAUDE.md') '.\CLAUDE.md'
-    if ($preserved) {
-        Set-Content -Path '.\.claude-wyvrn-local\PROJECT.md' -Value $preserved -NoNewline -Encoding UTF8
-        Info "preserved previous CLAUDE.md content to .claude-wyvrn-local\PROJECT.md"
+    if ($preserve) {
+        Move-Item -Force '.\CLAUDE.md' '.\.claude-wyvrn-local\PROJECT.md'
+        Info "preserved previous CLAUDE.md as .claude-wyvrn-local\PROJECT.md"
     }
+    Copy-Item -Force (Join-Path $SkeletonDir 'CLAUDE.md') '.\CLAUDE.md'
     Info "initialized project skeleton in $(Get-Location)"
 }
 
@@ -278,9 +278,9 @@ function Invoke-Uninit {
     $archProject  = '.\.claude-wyvrn-local\ARCHITECTURE.md'
     $archSkeleton = Join-Path $SkeletonDir '.claude-wyvrn-local\ARCHITECTURE.md'
     if ((Test-Path $archProject) -and (Test-Path $archSkeleton)) {
-        $cur  = Get-Content $archProject  -Raw
-        $skel = Get-Content $archSkeleton -Raw
-        if ($cur -and ($cur.Trim() -ne $skel.Trim())) { $dirty += "ARCHITECTURE.md (modified from template)" }
+        if ((Get-FileSha256Lower $archProject) -ne (Get-FileSha256Lower $archSkeleton)) {
+            $dirty += "ARCHITECTURE.md (modified from template)"
+        }
     }
     if ($dirty -and -not $force) {
         Write-Host "claude-wyvrn: uninit would discard the following user content:"
@@ -304,10 +304,13 @@ function Invoke-Refresh {
     if (-not (Test-Path '.\.claude-wyvrn-local')) {
         Die ".claude-wyvrn-local\ not found in cwd. Run: claude-wyvrn init"
     }
-    $existingClaude = if (Test-Path '.\CLAUDE.md') { Get-Content '.\CLAUDE.md' -Raw } else { '' }
-    $skelClaude     = Get-Content (Join-Path $SkeletonDir 'CLAUDE.md') -Raw
-    if ($existingClaude -ne $skelClaude) {
-        Copy-Item -Force (Join-Path $SkeletonDir 'CLAUDE.md') '.\CLAUDE.md'
+    $skelClaudePath = Join-Path $SkeletonDir 'CLAUDE.md'
+    $needsUpdate = $true
+    if (Test-Path '.\CLAUDE.md') {
+        $needsUpdate = (Get-FileSha256Lower '.\CLAUDE.md') -ne (Get-FileSha256Lower $skelClaudePath)
+    }
+    if ($needsUpdate) {
+        Copy-Item -Force $skelClaudePath '.\CLAUDE.md'
         Info "updated CLAUDE.md"
     } else {
         Info "CLAUDE.md already up-to-date"
