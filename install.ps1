@@ -1,4 +1,4 @@
-# claude-wyvrn — installer and CLI for the Wyvrn Claude harness (Windows / PowerShell).
+# claude-wyvrn - installer and CLI for the Wyvrn Claude harness (Windows / PowerShell).
 # Bootstrap:  iwr -useb https://raw.githubusercontent.com/andrewputrajaya/claude-wyvrn/main/install.ps1 | iex
 # Installed:  invoked as `claude-wyvrn <verb>` after first install.
 #
@@ -120,7 +120,7 @@ function Install-Shim($selfPath, $tmp) {
             Copy-Item -Force $selfPath $internalScript
         }
     } else {
-        Die "cannot install CLI shim: install.ps1 not available from release or local path (this should not happen — please report)"
+        Die "cannot install CLI shim: install.ps1 not available from release or local path (this should not happen - please report)"
     }
     @"
 # claude-wyvrn shim

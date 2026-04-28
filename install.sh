@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# claude-wyvrn — installer and CLI for the Wyvrn Claude harness.
+# claude-wyvrn - installer and CLI for the Wyvrn Claude harness.
 # Bootstrap:  curl -fsSL https://raw.githubusercontent.com/andrewputrajaya/claude-wyvrn/main/install.sh | bash
 # Installed:  invoked as `claude-wyvrn <verb>` after first install.
 
@@ -84,7 +84,7 @@ install_shim() {
       cp "$src" "$INTERNAL_SCRIPT"
     fi
   else
-    die "cannot install CLI shim: install.sh not available from release or local path (this should not happen — please report)"
+    die "cannot install CLI shim: install.sh not available from release or local path (this should not happen - please report)"
   fi
   chmod +x "$INTERNAL_SCRIPT" 2>/dev/null || true
   cat > "$SHIM" <<'EOF'
@@ -339,7 +339,7 @@ cmd_uninstall() {
 
 cmd_help() {
   cat <<EOF
-claude-wyvrn — Wyvrn Claude harness installer/CLI
+claude-wyvrn - Wyvrn Claude harness installer/CLI
 
 Usage: claude-wyvrn <command>
 
