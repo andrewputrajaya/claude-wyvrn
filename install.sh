@@ -201,18 +201,16 @@ cmd_init() {
   if [ -d "./.claude-wyvrn-local" ]; then
     die "project already initialized (.claude-wyvrn-local/ exists). To update skeleton structure and CLAUDE.md, run: claude-wyvrn refresh"
   fi
-  local preserved=""
-  if [ -f "./CLAUDE.md" ]; then
-    if ! cmp -s "./CLAUDE.md" "$SKELETON_DIR/CLAUDE.md"; then
-      preserved="$(cat ./CLAUDE.md)"
-    fi
+  local preserve=0
+  if [ -f "./CLAUDE.md" ] && ! cmp -s "./CLAUDE.md" "$SKELETON_DIR/CLAUDE.md"; then
+    preserve=1
   fi
   cp -R "$SKELETON_DIR/.claude-wyvrn-local" "./.claude-wyvrn-local"
-  cp    "$SKELETON_DIR/CLAUDE.md"           "./CLAUDE.md"
-  if [ -n "$preserved" ]; then
-    printf '%s' "$preserved" > "./.claude-wyvrn-local/PROJECT.md"
-    log "preserved previous CLAUDE.md content to .claude-wyvrn-local/PROJECT.md"
+  if [ "$preserve" = "1" ]; then
+    mv -f "./CLAUDE.md" "./.claude-wyvrn-local/PROJECT.md"
+    log "preserved previous CLAUDE.md as .claude-wyvrn-local/PROJECT.md"
   fi
+  cp "$SKELETON_DIR/CLAUDE.md" "./CLAUDE.md"
   log "initialized project skeleton in $(pwd)"
 }
 
