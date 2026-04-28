@@ -12,4 +12,4 @@ The harness is installed globally at `~/.claude-wyvrn/` (which resolves to the u
 
 Do not begin work until all three have been read.
 
-If `~/.claude-wyvrn/` does not exist or is missing required files, halt. The harness is not installed on this machine. Report to the human via the active session: "Wyvrn harness not installed at `~/.claude-wyvrn/`. Install the harness and retry."
+If `~/.claude-wyvrn/` does not exist or is missing required files, halt. The harness is not installed on this machine. Report to the human via the active session: "Wyvrn harness not installed at `~/.claude-wyvrn/`. Install with `curl -fsSL https://raw.githubusercontent.com/WyvrnOfficial/claude-wyvrn/main/install.sh | bash` (Unix) or `iwr -useb https://raw.githubusercontent.com/WyvrnOfficial/claude-wyvrn/main/install.ps1 | iex` (Windows PowerShell), then retry."

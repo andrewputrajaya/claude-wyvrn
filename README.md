@@ -4,34 +4,96 @@ A standardized structure that lets Claude Code, Claude CLI, and Claude Cowork ag
 
 Starting in v0.2, the harness installs **globally per machine** (one install, many projects) and each project carries a small **project-local folder** for its artifacts.
 
-## Install (v0.2 — manual)
-
-This archive contains two top-level folders:
-
-- `.claude-wyvrn/` — the harness itself. Install to `~/.claude-wyvrn/` (your home directory).
-- `.claude-wyvrn-local/` — CLAUDE.md —  Install to local project directory.
+## Install
 
 ### Install the harness globally (once per machine)
 
-1. Copy the contents of `.claude-wyvrn/` into `~/.claude-wyvrn/`.
-2. On Windows this is typically `%USERPROFILE%\.claude-wyvrn\`.
-3. Verify: `~/.claude-wyvrn/VERSION` should exist and contain a version number.
+**macOS / Linux / WSL / Git Bash:**
 
-All projects on this machine will share this harness. When a new harness version is released, update this one folder and every project picks it up.
+```bash
+curl -fsSL https://raw.githubusercontent.com/WyvrnOfficial/claude-wyvrn/main/install.sh | bash
+```
 
-### Install project-template into a project (once per project)
+**Windows (PowerShell):**
+
+```powershell
+iwr -useb https://raw.githubusercontent.com/WyvrnOfficial/claude-wyvrn/main/install.ps1 | iex
+```
+
+That installs the harness to `~/.claude-wyvrn/` and puts a `claude-wyvrn` shim on your PATH (`~/.local/bin/` on Unix, `~/.claude-wyvrn/bin/` on Windows). Open a new shell to pick up the PATH change. Then verify:
+
+```
+claude-wyvrn doctor
+```
+
+All projects on this machine share the harness. When a new version ships, run `claude-wyvrn update` and every project on the machine picks it up.
+
+**Pin a specific version** (handy for CI reproducibility):
+
+```bash
+CLAUDE_WYVRN_VERSION=0.2.1 curl -fsSL https://raw.githubusercontent.com/WyvrnOfficial/claude-wyvrn/main/install.sh | bash
+```
+
+**Verified install** (for users who don't want to pipe curl into bash):
+
+```bash
+curl -fsSLO https://github.com/WyvrnOfficial/claude-wyvrn/releases/latest/download/install.sh
+curl -fsSLO https://github.com/WyvrnOfficial/claude-wyvrn/releases/latest/download/SHA256SUMS
+sha256sum --ignore-missing -c SHA256SUMS
+bash install.sh
+```
+
+**Locked-down corp environments** (where `iex` or `curl | bash` is blocked): use `gh release download` or download the assets manually from the [latest release](https://github.com/WyvrnOfficial/claude-wyvrn/releases/latest), then run `bash install.sh` / `.\install.ps1`. On Windows, you may need `Set-ExecutionPolicy -Scope Process Bypass` first.
+
+### Initialize a project (once per project)
 
 From the root of the project:
 
-1. Copy `CLAUDE.md` into the project root. 
-2. Copy the `.claude-wyvrn-local/` folder into the project root.
-3. Track both in git.
-4. Open `.claude-wyvrn-local/ARCHITECTURE.md` and fill it in for your project.
-5. Optionally add `PROJECT.md` or stack-specific conventions (see Customization below). This is where you can move your pre-existing CLAUDE.md content. 
+```
+claude-wyvrn init
+```
+
+That copies `CLAUDE.md` and `.claude-wyvrn-local/` into the current directory from the harness install. If you already had a `CLAUDE.md` with project content, `init` automatically moves it to `.claude-wyvrn-local/PROJECT.md` so nothing is lost. Then:
+
+1. Track both in git.
+2. Open `.claude-wyvrn-local/ARCHITECTURE.md` and fill it in for your project.
+3. If `init` created `PROJECT.md` from your old `CLAUDE.md`, review it — that's now the project spec the harness reads. You can also add stack-specific conventions; see Customization below.
+
+### Refresh an existing project (after a harness upgrade)
+
+From an already-initialized project root:
+
+```
+claude-wyvrn refresh
+```
+
+`refresh` overwrites `CLAUDE.md` with the current skeleton (it's the harness entry-point — project-specific content lives in `PROJECT.md`) and additively creates any missing directories or `.gitkeep` files under `.claude-wyvrn-local/`. It **never** touches `PROJECT.md`, `ARCHITECTURE.md`, artifacts (`features/`, `fixes/`, `refactors/`, `decisions/`, etc.), `conventions/`, or `.archive/`. Run it after `claude-wyvrn update` if a new harness version adds new artifact dirs or updates the entry-point template.
+
+### Updating the harness
+
+```
+claude-wyvrn update
+```
+
+Replaces `~/.claude-wyvrn/` with the latest release. The harness territory is read-only during flows, so there is nothing user-edited to preserve.
+
+### CLI reference
+
+| Command | What it does |
+|---|---|
+| `claude-wyvrn install` | First-time install (idempotent — running again no-ops if up-to-date). |
+| `claude-wyvrn update` | Upgrade to the latest harness release (or `CLAUDE_WYVRN_VERSION`). |
+| `claude-wyvrn init` | Initialize a new project. Auto-preserves any pre-existing `CLAUDE.md` to `PROJECT.md`. Refuses if `.claude-wyvrn-local/` already exists. |
+| `claude-wyvrn refresh` | Re-apply skeleton in an already-initialized project. Overwrites `CLAUDE.md`; additively adds missing dirs/files. Never touches `PROJECT.md`, `ARCHITECTURE.md`, or artifacts. |
+| `claude-wyvrn uninit` | Inverse of `init`: restore `PROJECT.md` as `CLAUDE.md` and remove `.claude-wyvrn-local/`. Refuses if artifacts are present; override with `--force`. |
+| `claude-wyvrn doctor` | Verify install integrity, check for newer version. |
+| `claude-wyvrn version` | Print installed harness version. |
+| `claude-wyvrn uninstall` | Remove `~/.claude-wyvrn/` and the CLI shim (global; this is *not* the per-project undo — use `uninit` for that). |
+| `claude-wyvrn help` | Show usage. |
 
 ### CI
 
-CI needs the harness installed the same way as a developer machine. Before running any flow-based automation, install the harness at `~/.claude-wyvrn/` in the CI environment. The project-template files (`CLAUDE.md` and `.claude-wyvrn-local/`) come with the repo.
+Run the same one-liner at the start of any CI job that uses Claude flows. For reproducibility, pin a version with `CLAUDE_WYVRN_VERSION=<x.y.z>`. The project-template files (`CLAUDE.md` and `.claude-wyvrn-local/`) come with your repo.
 
 ## What you can do
 
