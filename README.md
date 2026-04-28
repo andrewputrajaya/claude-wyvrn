@@ -11,13 +11,13 @@ Starting in v0.2, the harness installs **globally per machine** (one install, ma
 **macOS / Linux / WSL / Git Bash:**
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/WyvrnOfficial/claude-wyvrn/main/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/andrewputrajaya/claude-wyvrn/main/install.sh | bash
 ```
 
 **Windows (PowerShell):**
 
 ```powershell
-iwr -useb https://raw.githubusercontent.com/WyvrnOfficial/claude-wyvrn/main/install.ps1 | iex
+iwr -useb https://raw.githubusercontent.com/andrewputrajaya/claude-wyvrn/main/install.ps1 | iex
 ```
 
 That installs the harness to `~/.claude-wyvrn/` and puts a `claude-wyvrn` shim on your PATH (`~/.local/bin/` on Unix, `~/.claude-wyvrn/bin/` on Windows). Open a new shell to pick up the PATH change. Then verify:
@@ -31,19 +31,19 @@ All projects on this machine share the harness. When a new version ships, run `c
 **Pin a specific version** (handy for CI reproducibility):
 
 ```bash
-CLAUDE_WYVRN_VERSION=0.2.1 curl -fsSL https://raw.githubusercontent.com/WyvrnOfficial/claude-wyvrn/main/install.sh | bash
+CLAUDE_WYVRN_VERSION=0.2.1 curl -fsSL https://raw.githubusercontent.com/andrewputrajaya/claude-wyvrn/main/install.sh | bash
 ```
 
 **Verified install** (for users who don't want to pipe curl into bash):
 
 ```bash
-curl -fsSLO https://github.com/WyvrnOfficial/claude-wyvrn/releases/latest/download/install.sh
-curl -fsSLO https://github.com/WyvrnOfficial/claude-wyvrn/releases/latest/download/SHA256SUMS
+curl -fsSLO https://github.com/andrewputrajaya/claude-wyvrn/releases/latest/download/install.sh
+curl -fsSLO https://github.com/andrewputrajaya/claude-wyvrn/releases/latest/download/SHA256SUMS
 sha256sum --ignore-missing -c SHA256SUMS
 bash install.sh
 ```
 
-**Locked-down corp environments** (where `iex` or `curl | bash` is blocked): use `gh release download` or download the assets manually from the [latest release](https://github.com/WyvrnOfficial/claude-wyvrn/releases/latest), then run `bash install.sh` / `.\install.ps1`. On Windows, you may need `Set-ExecutionPolicy -Scope Process Bypass` first.
+**Locked-down corp environments** (where `iex` or `curl | bash` is blocked): use `gh release download` or download the assets manually from the [latest release](https://github.com/andrewputrajaya/claude-wyvrn/releases/latest), then run `bash install.sh` / `.\install.ps1`. On Windows, you may need `Set-ExecutionPolicy -Scope Process Bypass` first.
 
 ### Initialize a project (once per project)
 

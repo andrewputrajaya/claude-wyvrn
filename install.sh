@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
 # claude-wyvrn — installer and CLI for the Wyvrn Claude harness.
-# Bootstrap:  curl -fsSL https://raw.githubusercontent.com/WyvrnOfficial/claude-wyvrn/main/install.sh | bash
+# Bootstrap:  curl -fsSL https://raw.githubusercontent.com/andrewputrajaya/claude-wyvrn/main/install.sh | bash
 # Installed:  invoked as `claude-wyvrn <verb>` after first install.
 
 set -euo pipefail
 
-REPO="WyvrnOfficial/claude-wyvrn"
+REPO="andrewputrajaya/claude-wyvrn"
 INSTALL_DIR="$HOME/.claude-wyvrn"
 BIN_DIR="$HOME/.local/bin"
 SHIM="$BIN_DIR/claude-wyvrn"

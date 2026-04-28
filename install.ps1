@@ -1,5 +1,5 @@
 # claude-wyvrn — installer and CLI for the Wyvrn Claude harness (Windows / PowerShell).
-# Bootstrap:  iwr -useb https://raw.githubusercontent.com/WyvrnOfficial/claude-wyvrn/main/install.ps1 | iex
+# Bootstrap:  iwr -useb https://raw.githubusercontent.com/andrewputrajaya/claude-wyvrn/main/install.ps1 | iex
 # Installed:  invoked as `claude-wyvrn <verb>` after first install.
 #
 # If your environment blocks `iex`, save the file and run:
@@ -12,7 +12,7 @@ param(
 
 $ErrorActionPreference = 'Stop'
 
-$Repo         = 'WyvrnOfficial/claude-wyvrn'
+$Repo         = 'andrewputrajaya/claude-wyvrn'
 $InstallDir   = Join-Path $HOME '.claude-wyvrn'
 $BinDir       = Join-Path $InstallDir 'bin'
 $InternalDir  = Join-Path $InstallDir '.bin'
